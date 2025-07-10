@@ -4,8 +4,6 @@ import React, { useEffect, useRef, useState } from "react";
 
 import "leaflet/dist/leaflet.css";
 
-//@ts-expect-error trust me bro
-import { MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
 import L from "leaflet";
 
 import PinBlack from "../../../../public/pin_black.png";
@@ -60,13 +58,21 @@ const Map: React.FC<MapProps> = ({ center, pins }) => {
                 keyboard: false,
             });
 
-            // Create a MapTiler Layer inside Leaflet
-            const mtLayer = new MaptilerLayer({
-                // Get your free API key at https://cloud.maptiler.com
-                apiKey: process.env.NEXT_PUBLIC_MAPTILER_API_KEY,
+            // Create OpenStreetMap tile layer with better contrast for emergency use
+            const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19,
+                className: 'map-tiles'
             });
 
-            mtLayer.addTo(map.current);
+            // Alternative: Use CartoDB Positron for cleaner emergency dispatch view
+            // const cartoLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            //     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
+            //     maxZoom: 19,
+            //     subdomains: 'abcd'
+            // });
+
+            osmLayer.addTo(map.current);
         }
 
         // Update map center when center prop changes
